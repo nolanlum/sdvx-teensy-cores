@@ -28,6 +28,7 @@
 #include "usb_midi.h"
 #include "usb_rawhid.h"
 #include "usb_flightsim.h"
+#include "usb_sdvx.h"
 
 //#include "WCharacter.h"
 #include "WString.h"

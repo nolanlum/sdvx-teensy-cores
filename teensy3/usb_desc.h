@@ -10,10 +10,10 @@
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
  *
- * 1. The above copyright notice and this permission notice shall be 
+ * 1. The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  *
- * 2. If the Software is incorporated into a build system that allows 
+ * 2. If the Software is incorporated into a build system that allows
  * selection among a list of target devices, then similar target
  * devices manufactured by PJRC.COM must be included in the list of
  * target devices and selectable in the same manner.
@@ -290,6 +290,39 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
   #define ENDPOINT2_CONFIG	ENDPOINT_RECEIVE_ONLY
   #define ENDPOINT3_CONFIG	ENDPOINT_TRANSIMIT_ONLY
   #define ENDPOINT4_CONFIG	ENDPOINT_RECEIVE_ONLY
+
+#elif defined(USB_SDVX)
+  #define VENDOR_ID		            0x16C0
+  #define PRODUCT_ID		          0x0493
+  #define MANUFACTURER_NAME	      {'T','e','e','n','s','y','d','u','i','n','o'}
+  #define MANUFACTURER_NAME_LEN	  11
+  #define PRODUCT_NAME		        {'S','D','V','X',' ','C','o','n','t','r','o','l','l','e','r'}
+  #define PRODUCT_NAME_LEN	      15
+  #define EP0_SIZE		            64
+  #define NUM_ENDPOINTS           4
+  #define NUM_USB_BUFFERS	        24
+  #define NUM_INTERFACE		        2
+  #define SDVX_INTERFACE          0 // SDVX
+  #define SDVX_TX_ENDPOINT        1
+  #define SDVX_TX_SIZE            16
+  #define SDVX_TX_INTERVAL        1
+  #define SDVX_RX_ENDPOINT        2
+  #define SDVX_RX_SIZE            16
+  #define SDVX_RX_INTERVAL        2
+  #define SEREMU_INTERFACE        1 // Serial emulation
+  #define SEREMU_TX_ENDPOINT      3
+  #define SEREMU_TX_SIZE          64
+  #define SEREMU_TX_INTERVAL      1
+  #define SEREMU_RX_ENDPOINT      4
+  #define SEREMU_RX_SIZE          32
+  #define SEREMU_RX_INTERVAL      2
+  #define SDVX_DESC_OFFSET        (9 + 9)
+  #define SEREMU_DESC_OFFSET      (9 + 9+9+7+7 + 9)
+  #define CONFIG_DESC_SIZE	      (9 + 9+9+7+7 + 9+9+7+7)
+  #define ENDPOINT1_CONFIG	ENDPOINT_TRANSIMIT_ONLY
+  #define ENDPOINT2_CONFIG  ENDPOINT_RECEIVE_ONLY
+  #define ENDPOINT3_CONFIG  ENDPOINT_TRANSIMIT_ONLY
+  #define ENDPOINT4_CONFIG  ENDPOINT_RECEIVE_ONLY
 
 #endif
 

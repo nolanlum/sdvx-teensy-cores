@@ -10,10 +10,10 @@
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
  *
- * 1. The above copyright notice and this permission notice shall be 
+ * 1. The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  *
- * 2. If the Software is incorporated into a build system that allows 
+ * 2. If the Software is incorporated into a build system that allows
  * selection among a list of target devices, then similar target
  * devices manufactured by PJRC.COM must be included in the list of
  * target devices and selectable in the same manner.
@@ -234,6 +234,51 @@ static uint8_t joystick_report_desc[] = {
 };
 #endif
 
+#ifdef SDVX_INTERFACE
+static uint8_t sdvx_report_desc[] = {
+        0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+        0x09, 0x04,                    // USAGE (Joystick)
+        0xa1, 0x01,                    // COLLECTION (Application)
+        0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+        0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+        0x75, 0x01,                    //   REPORT_SIZE (1)
+        0x95, 0x07,                    //   REPORT_COUNT (7)
+        0x05, 0x09,                    //   USAGE_PAGE (Button)
+        0x19, 0x01,                    //   USAGE_MINIMUM (Button 1)
+        0x29, 0x07,                    //   USAGE_MAXIMUM (Button 7)
+        0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+        0x75, 0x01,                    //   REPORT_SIZE (1)
+        0x95, 0x01,                    //   REPORT_COUNT (1)
+        0x81, 0x03,                    //   INPUT (Cnst,Var,Abs)
+        0x05, 0x01,                    //   USAGE_PAGE (Generic Desktop)
+        0x09, 0x01,                    //   USAGE (Pointer)
+        0xa1, 0x00,                    //   COLLECTION (Physical)
+        0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+        0x26, 0xff, 0x03,              //     LOGICAL_MAXIMUM (1023)
+        0x75, 0x0a,                    //     REPORT_SIZE (10)
+        0x95, 0x02,                    //     REPORT_COUNT (2)
+        0x09, 0x30,                    //     USAGE (X)
+        0x09, 0x31,                    //     USAGE (Y)
+        0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+        0xc0,                          //   END_COLLECTION
+        0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+        0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+        0x75, 0x04,                    //   REPORT_SIZE (4)
+        0x95, 0x01,                    //   REPORT_COUNT (1)
+        0x81, 0x03,                    //   INPUT (Cnst,Var,Abs)
+        0x75, 0x01,                    //   REPORT_SIZE (1)
+        0x95, 0x07,                    //   REPORT_COUNT (7)
+        0x05, 0x08,                    //   USAGE_PAGE (LEDs)
+        0x19, 0x01,                    //   USAGE_MINIMUM (1)
+        0x29, 0x07,                    //   USAGE_MAXIMUM (7)
+        0x91, 0x02,                    //   OUTPUT (Data,Var,Abs)
+        0x75, 0x01,                    //   REPORT_SIZE (1)
+        0x95, 0x01,                    //   REPORT_COUNT (1)
+        0x91, 0x03,                    //   OUTPUT (Cnst,Var,Abs)
+        0xc0                           // END_COLLECTION
+};
+#endif
+
 #ifdef SEREMU_INTERFACE
 static uint8_t seremu_report_desc[] = {
         0x06, 0xC9, 0xFF,                       // Usage Page 0xFFC9 (vendor defined)
@@ -309,7 +354,7 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         1,                                      // bConfigurationValue
         0,                                      // iConfiguration
         0xC0,                                   // bmAttributes
-        50,                                     // bMaxPower
+        250,                                    // bMaxPower
 
 #ifdef CDC_IAD_DESCRIPTOR
         // interface association descriptor, USB ECN, Table 9-Z
@@ -403,7 +448,7 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         // MIDI MS Interface Header, USB MIDI 6.1.2.1, page 21, Table 6-2
         7,                                      // bLength
         0x24,                                   // bDescriptorType = CS_INTERFACE
-        0x01,                                   // bDescriptorSubtype = MS_HEADER 
+        0x01,                                   // bDescriptorSubtype = MS_HEADER
         0x00, 0x01,                             // bcdMSC = revision 01.00
         0x41, 0x00,                             // wTotalLength
         // MIDI IN Jack Descriptor, B.4.3, Table B-7 (embedded), page 40
@@ -442,7 +487,7 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         0,                                      // iJack
         // Standard Bulk OUT Endpoint Descriptor, B.5.1, Table B-11, pae 42
         9,                                      // bLength
-        5,                                      // bDescriptorType = ENDPOINT 
+        5,                                      // bDescriptorType = ENDPOINT
         MIDI_RX_ENDPOINT,                       // bEndpointAddress
         0x02,                                   // bmAttributes (0x02=bulk)
         MIDI_RX_SIZE, 0,                        // wMaxPacketSize
@@ -457,7 +502,7 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         1,                                      // BaAssocJackID(1) = jack ID #1
         // Standard Bulk IN Endpoint Descriptor, B.5.1, Table B-11, pae 42
         9,                                      // bLength
-        5,                                      // bDescriptorType = ENDPOINT 
+        5,                                      // bDescriptorType = ENDPOINT
         MIDI_TX_ENDPOINT | 0x80,                // bEndpointAddress
         0x02,                                   // bmAttributes (0x02=bulk)
         MIDI_TX_SIZE, 0,                        // wMaxPacketSize
@@ -601,6 +646,41 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         FLIGHTSIM_RX_SIZE, 0,                   // wMaxPacketSize
         FLIGHTSIM_RX_INTERVAL,			// bInterval
 #endif // FLIGHTSIM_INTERFACE
+
+#ifdef SDVX_INTERFACE
+        9,                                      // bLength
+        4,                                      // bDescriptorType
+        SDVX_INTERFACE,                         // bInterfaceNumber
+        0,                                      // bAlternateSetting
+        2,                                      // bNumEndpoints
+        0x03,                                   // bInterfaceClass (0x03 = HID)
+        0x00,                                   // bInterfaceSubClass
+        0x00,                                   // bInterfaceProtocol
+        0,                                      // iInterface
+        // HID interface descriptor, HID 1.11 spec, section 6.2.1
+        9,                                      // bLength
+        0x21,                                   // bDescriptorType
+        0x11, 0x01,                             // bcdHID
+        0,                                      // bCountryCode
+        1,                                      // bNumDescriptors
+        0x22,                                   // bDescriptorType
+        LSB(sizeof(sdvx_report_desc)),          // wDescriptorLength
+        MSB(sizeof(sdvx_report_desc)),
+        // endpoint descriptor, USB spec 9.6.6, page 269-271, Table 9-13
+        7,                                      // bLength
+        5,                                      // bDescriptorType
+        SDVX_TX_ENDPOINT | 0x80,                // bEndpointAddress
+        0x03,                                   // bmAttributes (0x03=intr)
+        SDVX_TX_SIZE, 0,                        // wMaxPacketSize
+        SDVX_TX_INTERVAL,                       // bInterval
+        // endpoint descriptor, USB spec 9.6.6, page 269-271, Table 9-13
+        7,                                      // bLength
+        5,                                      // bDescriptorType
+        SDVX_RX_ENDPOINT,                       // bEndpointAddress
+        0x03,                                   // bmAttributes (0x03=intr)
+        SDVX_RX_SIZE, 0,                        // wMaxPacketSize
+        SDVX_RX_INTERVAL,                       // bInterval
+#endif // SDVX_INTERFACE
 
 #ifdef SEREMU_INTERFACE
         // interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
@@ -764,6 +844,10 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
         {0x2200, JOYSTICK_INTERFACE, joystick_report_desc, sizeof(joystick_report_desc)},
         {0x2100, JOYSTICK_INTERFACE, config_descriptor+JOYSTICK_DESC_OFFSET, 9},
 #endif
+#ifdef SDVX_INTERFACE
+        {0x2200, SDVX_INTERFACE, sdvx_report_desc, sizeof(sdvx_report_desc)},
+        {0x2100, SDVX_INTERFACE, config_descriptor+SDVX_DESC_OFFSET, 9},
+#endif
 #ifdef RAWHID_INTERFACE
 	{0x2200, RAWHID_INTERFACE, rawhid_report_desc, sizeof(rawhid_report_desc)},
 	{0x2100, RAWHID_INTERFACE, config_descriptor+RAWHID_DESC_OFFSET, 9},
@@ -792,16 +876,16 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
 // 0x19 = Recieve only
 // 0x15 = Transmit only
 // 0x1D = Transmit & Recieve
-// 
-const uint8_t usb_endpoint_config_table[NUM_ENDPOINTS] = 
+//
+const uint8_t usb_endpoint_config_table[NUM_ENDPOINTS] =
 {
-	0x00, 0x15, 0x19, 0x15, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x15, 0x19, 0x15, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 #endif
 
 
-const uint8_t usb_endpoint_config_table[NUM_ENDPOINTS] = 
+const uint8_t usb_endpoint_config_table[NUM_ENDPOINTS] =
 {
 #if (defined(ENDPOINT1_CONFIG) && NUM_ENDPOINTS >= 1)
 	ENDPOINT1_CONFIG,
